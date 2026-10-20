@@ -1,0 +1,21 @@
+[Unit]
+Description=Rail web (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=rail
+Group=rail
+WorkingDirectory=/opt/rail
+Environment=NODE_ENV=production
+EnvironmentFile=-/opt/rail/.env
+ExecStart=/opt/rail/node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=3
+TimeoutStopSec=20
+
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

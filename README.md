@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rail
 
-## Getting Started
+A modern unofficial Amtrak train status board inspired by [RailRat.net](https://railrat.net/). Browse system status by **route**, **station**, and **train**, with progress timelines, station boards, and a RailRat-style schedule matrix.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For correct social/link preview URLs when deploying, set:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
 
-## Learn More
+Add to Home Screen uses `/manifest.webmanifest` and `/apple-touch-icon.png`.
 
-To learn more about Next.js, take a look at the following resources:
+## Data
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Live train and station data comes from the [Amtraker](https://amtraker.com) API (`api.amtraker.com`), cached for about a minute. Amtraker data is licensed under [ODC-By](https://opendatacommons.org/licenses/by/1-0/); attribution is shown in the UI and footer.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Static route catalog stubs in `src/lib/data/` fill in routes with no current trains so the index stays complete.
 
-## Deploy on Vercel
+## Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Unofficial and unaffiliated with Amtrak.
+- Prefer Amtrak’s [Track Your Train](https://www.amtrak.com/track-your-train.html) map as the authoritative source when traveling.
+- Identify this app with a clear `User-Agent` when calling Amtraker (already set in `src/lib/amtrak/client.ts`).
