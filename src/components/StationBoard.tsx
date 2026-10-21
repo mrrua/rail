@@ -41,6 +41,9 @@ export function StationBoard({
                 </Link>
                 <span className="truncate text-sm text-ink-soft">
                   {item.routeName}
+                  {item.fromLabel && item.toLabel
+                    ? ` · ${item.fromLabel} → ${item.toLabel}`
+                    : null}
                 </span>
               </div>
             </div>

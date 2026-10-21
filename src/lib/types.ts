@@ -75,6 +75,8 @@ export interface StationBoardItem {
   punctuality: Punctuality;
   kind: "arriving" | "departed";
   trainId?: string;
+  fromLabel?: string;
+  toLabel?: string;
 }
 
 export interface RouteMatrixCell {

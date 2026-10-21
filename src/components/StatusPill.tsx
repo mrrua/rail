@@ -21,7 +21,7 @@ export function PunctualityPill({ value }: { value: Punctuality }) {
 
 export function TrainStatusPill({ status }: { status: TrainStatus }) {
   const map = {
-    active: "bg-rail/10 text-rail-deep",
+    active: "bg-lamp/20 text-signal",
     complete: "bg-mist/80 text-ink-soft",
     pending: "bg-signal/10 text-signal",
   } as const;
@@ -31,7 +31,7 @@ export function TrainStatusPill({ status }: { status: TrainStatus }) {
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${map[status]}`}
     >
       {status === "active" ? (
-        <span className="live-dot h-1.5 w-1.5 rounded-full bg-rail" />
+        <span className="live-dot h-1.5 w-1.5 rounded-full bg-lamp" />
       ) : null}
       {statusLabel(status)}
     </span>

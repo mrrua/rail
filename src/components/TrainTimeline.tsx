@@ -4,6 +4,14 @@ import type { StopEvent } from "@/lib/types";
 import { PunctualityPill } from "./StatusPill";
 
 export function TrainTimeline({ stops }: { stops: StopEvent[] }) {
+  const movingIndex = stops.findIndex(
+    (s) => s.state === "en_route" || s.state === "arrived",
+  );
+  const focusIndex =
+    movingIndex >= 0
+      ? movingIndex
+      : stops.findIndex((s) => s.state === "upcoming");
+
   return (
     <ol className="relative space-y-0">
       <div
@@ -26,12 +34,15 @@ export function TrainTimeline({ stops }: { stops: StopEvent[] }) {
         return (
           <li
             key={`${stop.stationCode}-${index}`}
-            className="relative flex gap-4 py-3 pl-0"
+            id={index === focusIndex ? "current-stop" : undefined}
+            className={`relative flex gap-4 py-3 pl-0 ${
+              index === focusIndex ? "scroll-mt-24 rounded-xl bg-signal/10 px-2" : ""
+            }`}
           >
             <span
               className={`relative z-10 mt-1.5 h-[10px] w-[10px] shrink-0 rounded-full border-2 ${
                 current
-                  ? "border-signal bg-signal shadow-[0_0_0_4px_rgba(196,132,74,0.18)]"
+                  ? "border-signal bg-signal shadow-[0_0_0_4px_rgba(250,186,54,0.28)]"
                   : done
                     ? "border-rail bg-rail"
                     : "border-line bg-paper"

@@ -43,7 +43,7 @@ export async function SiteFooter() {
               own risk.
             </p>
           </div>
-          <p className="font-mono text-xs text-ink-soft/90">
+          <p suppressHydrationWarning className="font-mono text-xs text-ink-soft/90">
             {meta.source === "live" ? "Updated" : "Last attempt"}{" "}
             {formatUpdatedAt(meta.updatedAt)}
           </p>

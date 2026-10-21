@@ -32,6 +32,13 @@ export type RouteSearchItem = {
   trainNumbers: string[];
 };
 
+export type StationSearchItem = {
+  code: string;
+  name: string;
+  city: string;
+  state: string;
+};
+
 type Hit =
   | {
       kind: "train";
@@ -46,15 +53,24 @@ type Hit =
       href: string;
       route: RouteSearchItem;
       score: number;
+    }
+  | {
+      kind: "station";
+      key: string;
+      href: string;
+      station: StationSearchItem;
+      score: number;
     };
 
 export function TrainSearch({
   trains,
   routes,
+  stations = [],
   autoFocus = false,
 }: {
   trains: TrainSearchItem[];
   routes: RouteSearchItem[];
+  stations?: StationSearchItem[];
   autoFocus?: boolean;
 }) {
   const router = useRouter();
@@ -67,8 +83,8 @@ export function TrainSearch({
   const deferred = useDeferredValue(query);
 
   const hits = useMemo(
-    () => rankHits(deferred, trains, routes).slice(0, 8),
-    [deferred, trains, routes],
+    () => rankHits(deferred, trains, routes, stations).slice(0, 8),
+    [deferred, trains, routes, stations],
   );
 
   useEffect(() => {
@@ -99,10 +115,10 @@ export function TrainSearch({
   const showPanel = open && query.trim().length > 0;
 
   return (
-    <div ref={rootRef} className="relative z-30 w-full max-w-xl">
+    <div ref={rootRef} className="relative z-[60] w-full max-w-xl">
       <form onSubmit={onSubmit} role="search">
         <label htmlFor={`${listId}-input`} className="sr-only">
-          Search trains by number or name
+          Search trains, routes, or stations
         </label>
         <div className="relative">
           <span
@@ -120,7 +136,7 @@ export function TrainSearch({
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
-            placeholder="Try 7, Empire Builder, Cascades…"
+            placeholder="Try 7, Empire Builder, Chicago…"
             aria-controls={listId}
             aria-expanded={showPanel}
             aria-autocomplete="list"
@@ -152,11 +168,11 @@ export function TrainSearch({
         <ul
           id={listId}
           role="listbox"
-          className="absolute z-30 mt-2 max-h-[min(24rem,55vh)] w-full overflow-auto rounded-2xl border border-line/80 bg-paper py-1.5 shadow-lg shadow-ink/10"
+          className="absolute z-[70] mt-2 max-h-[min(24rem,55vh)] w-full overflow-auto rounded-2xl border border-line/80 bg-paper py-1.5 shadow-lg shadow-ink/10"
         >
           {hits.length === 0 ? (
             <li className="px-4 py-3 text-sm text-ink-soft">
-              No trains or routes match “{query.trim()}”.
+              Nothing matches “{query.trim()}”.
             </li>
           ) : (
             hits.map((hit, index) => {
@@ -191,6 +207,23 @@ export function TrainSearch({
                           </span>
                         </span>
                       </>
+                    ) : hit.kind === "station" ? (
+                      <>
+                        <span className="mt-0.5 min-w-12 rounded-lg bg-mist/80 px-2 py-1 text-center font-mono text-sm font-semibold text-ink">
+                          {hit.station.code}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="font-medium text-ink">
+                            {hit.station.name}
+                          </span>
+                          <span className="mt-0.5 block text-sm text-ink-soft">
+                            {[hit.station.city, hit.station.state]
+                              .filter(Boolean)
+                              .join(", ")}
+                            {" · Station"}
+                          </span>
+                        </span>
+                      </>
                     ) : (
                       <>
                         <span className="mt-0.5 rounded-lg bg-rail/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-rail-deep">
@@ -222,7 +255,7 @@ export function TrainSearch({
 
 function StatusChip({ status }: { status: TrainStatus }) {
   const styles = {
-    active: "bg-rail/10 text-rail-deep",
+    active: "bg-lamp/20 text-signal",
     pending: "bg-signal/10 text-signal",
     complete: "bg-mist text-ink-soft",
   } as const;
@@ -253,6 +286,7 @@ function rankHits(
   rawQuery: string,
   trains: TrainSearchItem[],
   routes: RouteSearchItem[],
+  stations: StationSearchItem[],
 ): Hit[] {
   const q = rawQuery.trim().toLowerCase();
   if (!q) return [];
@@ -313,6 +347,31 @@ function rankHits(
         key: `route-${route.slug}`,
         href: `/routes/${route.slug}`,
         route,
+        score,
+      });
+    }
+  }
+
+  for (const station of stations) {
+    const code = station.code.toLowerCase();
+    const name = station.name.toLowerCase();
+    const city = station.city.toLowerCase();
+    const state = station.state.toLowerCase();
+    let score = 0;
+    if (code === q) score = 110;
+    else if (code.startsWith(q)) score = 92;
+    else if (name.startsWith(q)) score = 78;
+    else if (city.startsWith(q)) score = 72;
+    else if (q.length >= 4 && name.includes(q)) score = 52;
+    else if (q.length >= 4 && city.includes(q)) score = 48;
+    else if (q.length >= 2 && state === q) score = 28;
+
+    if (score > 0) {
+      hits.push({
+        kind: "station",
+        key: `station-${station.code}`,
+        href: `/stations/${station.code}`,
+        station,
         score,
       });
     }

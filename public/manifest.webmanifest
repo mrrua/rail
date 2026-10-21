@@ -4,8 +4,8 @@
   "description": "Live unofficial Amtrak train status by route, station, and train.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#E9EEF1",
-  "theme_color": "#3F7F7C",
+  "background_color": "#E7EDF3",
+  "theme_color": "#304056",
   "orientation": "portrait-primary",
   "icons": [
     {

@@ -9,7 +9,6 @@ import {
   type TrainSearchItem,
 } from "@/components/TrainSearch";
 import {
-  activeTrains,
   getBoardMeta,
   getLiveBoard,
   getRoutes,
@@ -41,30 +40,38 @@ async function HeroSearch() {
     trainNumbers: route.trainNumbers,
   }));
 
-  return <TrainSearch trains={trains} routes={routes} />;
+  const stations = board.stations.map((station) => ({
+    code: station.code,
+    name: station.name,
+    city: station.city,
+    state: station.state,
+  }));
+
+  return <TrainSearch trains={trains} routes={routes} stations={stations} />;
 }
 
 async function SystemStatus() {
-  const [totals, routes, meta, spotlight] = await Promise.all([
+  const [totals, routes, meta, board] = await Promise.all([
     getSystemTotals(),
     getRoutes(),
     getBoardMeta(),
-    activeTrains(),
+    getLiveBoard(),
   ]);
 
-  const featured = spotlight.filter((t) => t.hasRecentUpdate).slice(0, 4);
+  const featured = board.trains
+    .filter((t) => t.status === "active" && t.hasRecentUpdate)
+    .slice(0, 4);
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="mb-7 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-[1.75rem]">
-            System status
+            Active right now
           </h2>
           <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-ink-soft sm:text-base">
-            Tracking {totals.routes} routes with {totals.active} active trains,{" "}
-            {totals.pending} awaiting departure, and {totals.complete} completed
-            in the current feed.
+            {totals.active} trains moving, {totals.pending} awaiting departure,{" "}
+            {totals.complete} finished. {totals.routes} routes in the feed.
           </p>
         </div>
         <DataSourceBadge
@@ -74,42 +81,44 @@ async function SystemStatus() {
         />
       </div>
 
-      <RouteStatusTable routes={routes} />
-
-      <div className="mt-12 sm:mt-14">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
-          Active right now
-        </h2>
-        <p className="mt-2 text-[15px] text-ink-soft">
-          Live positions from Amtraker. Prefer Amtrak&apos;s Track Your Train map
-          when traveling.
-        </p>
-        <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-          {featured.map((train) => (
-            <li key={train.id}>
-              <Link
-                href={`/trains/${train.id}`}
-                className="block rounded-2xl border border-line/80 bg-paper/90 p-4 transition hover:border-rail/35 hover:bg-paper active:scale-[0.99] sm:p-5"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-mono text-lg font-semibold text-ink">
-                      {train.number}
-                    </p>
-                    <p className="text-sm text-ink-soft">{train.routeName}</p>
+      <div className="mb-12 sm:mb-14">
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {featured.map((train) => {
+            const origin = board.stationByCode[train.originCode];
+            const dest = board.stationByCode[train.destinationCode];
+            return (
+              <li key={train.id}>
+                <Link
+                  href={`/trains/${train.id}`}
+                  className="block rounded-2xl border border-line/80 bg-paper/90 p-4 transition hover:border-rail/35 hover:bg-paper active:scale-[0.99] sm:p-5"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-mono text-lg font-semibold text-ink">
+                        {train.number}
+                        <span className="ml-2 text-xs font-normal text-ink-soft">
+                          {train.id}
+                        </span>
+                      </p>
+                      <p className="text-sm text-ink-soft">{train.routeName}</p>
+                    </div>
+                    {typeof train.speedMph === "number" ? (
+                      <span className="rounded-full bg-lamp/20 px-2.5 py-1 font-mono text-xs font-semibold text-signal">
+                        {train.speedMph} mph
+                      </span>
+                    ) : null}
                   </div>
-                  {typeof train.speedMph === "number" ? (
-                    <span className="rounded-full bg-rail/10 px-2.5 py-1 font-mono text-xs text-rail-deep">
-                      {train.speedMph} mph
-                    </span>
-                  ) : null}
-                </div>
-                <p className="mt-3 text-[15px] leading-snug text-ink">
-                  {train.locationLabel ?? "En route"}
-                </p>
-              </Link>
-            </li>
-          ))}
+                  <p className="mt-3 text-sm text-ink">
+                    {origin?.city ?? train.originCode} →{" "}
+                    {dest?.city ?? train.destinationCode}
+                  </p>
+                  <p className="mt-1 text-[15px] leading-snug text-ink-soft">
+                    {train.locationLabel ?? "En route"}
+                  </p>
+                </Link>
+              </li>
+            );
+          })}
           {featured.length === 0 ? (
             <li className="text-sm text-ink-soft sm:col-span-2">
               No active Amtrak trains in the current feed.
@@ -117,6 +126,14 @@ async function SystemStatus() {
           ) : null}
         </ul>
       </div>
+
+      <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
+        All routes
+      </h2>
+      <p className="mt-2 mb-5 text-[15px] text-ink-soft">
+        The full index, including routes with nothing out right now.
+      </p>
+      <RouteStatusTable routes={routes} />
     </section>
   );
 }
@@ -130,13 +147,13 @@ function SearchFallback() {
 export default function HomePage() {
   return (
     <div>
-      <section className="relative isolate border-b border-line/50">
+      <section className="relative border-b border-line/50">
         <HeroRails />
-        <div className="relative z-10 mx-auto flex min-h-[58vh] max-w-6xl flex-col justify-end px-4 pb-12 pt-16 sm:min-h-[68vh] sm:px-6 sm:pb-16 sm:pt-24">
+        <div className="relative z-10 mx-auto flex min-h-[46vh] max-w-6xl flex-col justify-end px-4 pb-10 pt-12 sm:min-h-[52vh] sm:px-6 sm:pb-14 sm:pt-16">
           <p className="animate-rise font-display text-5xl font-extrabold tracking-tight text-ink sm:text-6xl md:text-7xl">
             Rail
           </p>
-          <h1 className="animate-rise-delay-1 mt-3 max-w-xl font-display text-xl font-semibold leading-snug text-ink/90 sm:mt-4 sm:text-2xl md:text-[1.7rem]">
+          <h1 className="animate-rise-delay-1 mt-3 max-w-xl font-display text-xl font-semibold leading-snug text-ink sm:mt-4 sm:text-2xl md:text-[1.7rem]">
             See where Amtrak is moving — by route, station, and train.
           </h1>
           <p className="animate-rise-delay-2 mt-3 max-w-md text-[15px] leading-relaxed text-ink-soft sm:mt-4 sm:text-base">

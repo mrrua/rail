@@ -39,7 +39,7 @@ async function RoutesBody() {
 export default function RoutesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      <h1 className="font-display text-4xl font-bold tracking-tight text-ink">
+      <h1 className="font-display text-4xl font-extrabold tracking-tight text-ink">
         Route index
       </h1>
       <Suspense

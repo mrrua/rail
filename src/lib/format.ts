@@ -69,5 +69,6 @@ export function formatUpdatedAt(iso: string): string {
     hour: "2-digit",
     minute: "2-digit",
     timeZoneName: "short",
+    timeZone: "America/New_York",
   });
 }

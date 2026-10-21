@@ -38,7 +38,7 @@ async function StationBody({ code }: { code: string }) {
   return (
     <>
       <p className="font-mono text-sm font-semibold text-rail">{station.code}</p>
-      <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-ink">
+      <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-ink">
         {station.name}
       </h1>
       <p className="mt-3 text-base text-ink-soft">

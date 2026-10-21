@@ -273,8 +273,8 @@ export function mapStation(raw: AmtrakerStationMeta): Station {
   return {
     code: raw.code,
     name: raw.state ? `${raw.name}, ${raw.state}` : raw.name,
-    city: raw.city || raw.name,
-    state: raw.state || "",
+    city: (raw.city || raw.name).trim(),
+    state: (raw.state || "").trim(),
   };
 }
 

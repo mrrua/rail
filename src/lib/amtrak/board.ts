@@ -203,7 +203,20 @@ export async function trainsGroupedByRoute(): Promise<
 
 export async function stationBoard(code: string): Promise<StationBoardItem[]> {
   const board = await getLiveBoard();
-  return buildStationBoard(code, board.trains);
+  return buildStationBoard(code, board.trains).map((item) => {
+    const train = item.trainId
+      ? board.trains.find((t) => t.id === item.trainId)
+      : undefined;
+    if (!train) return item;
+    return {
+      ...item,
+      fromLabel:
+        board.stationByCode[train.originCode]?.city ?? train.originCode,
+      toLabel:
+        board.stationByCode[train.destinationCode]?.city ??
+        train.destinationCode,
+    };
+  });
 }
 
 export async function routeMatrix(slug: string) {

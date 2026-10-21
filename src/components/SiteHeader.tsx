@@ -19,14 +19,14 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-line/60 bg-paper/90 backdrop-blur-md supports-[backdrop-filter]:bg-paper/75">
+      <header className="sticky top-0 z-40 border-b border-line/70 bg-paper">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <Link href="/" className="group flex items-center gap-2.5">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-rail text-white shadow-sm shadow-rail/20">
               <RailMark className="h-5 w-5" />
             </span>
             <span className="flex flex-col leading-none">
-              <span className="font-display text-xl font-bold tracking-tight text-ink transition-colors group-hover:text-rail-deep">
+              <span className="font-display text-xl font-extrabold tracking-tight text-ink transition-colors group-hover:text-rail-deep">
                 Rail
               </span>
               <span className="mt-1 hidden text-[10px] font-medium uppercase tracking-[0.16em] text-ink-soft sm:block">

@@ -55,9 +55,12 @@ async function TrainBody({ number }: { number: string }) {
   const board = await getLiveBoard();
   const origin = board.stationByCode[train.originCode];
   const dest = board.stationByCode[train.destinationCode];
-  const nextStop = train.stops.find(
-    (s) => s.state === "en_route" || s.state === "upcoming",
+  const currentStop = train.stops.find(
+    (s) => s.state === "en_route" || s.state === "arrived",
   );
+  const nextStop =
+    currentStop ?? train.stops.find((s) => s.state === "upcoming");
+  const departedCount = train.stops.filter((s) => s.state === "departed").length;
   const siblings = board.trains.filter(
     (t) => t.number === train.number && t.id !== train.id,
   );
@@ -71,10 +74,10 @@ async function TrainBody({ number }: { number: string }) {
               {train.routeName}
             </Link>
           </p>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-ink">
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-ink">
             Train {train.number}
           </h1>
-          <p className="mt-2 text-sm text-ink-soft">
+          <p suppressHydrationWarning className="mt-2 text-sm text-ink-soft">
             {train.id} · Updated {formatUpdatedAt(train.updatedAt)}
           </p>
         </div>
@@ -138,14 +141,39 @@ async function TrainBody({ number }: { number: string }) {
         </div>
       </section>
 
-      {nextStop ? (
-        <p className="mt-4 text-sm text-ink-soft">
-          Next:{" "}
-          {board.stationByCode[nextStop.stationCode]?.name ??
-            nextStop.stationCode}{" "}
-          ({formatPunctuality(nextStop.punctuality)})
+      <section className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-line bg-paper px-4 py-3.5 sm:px-5">
+        <p className="text-sm text-ink">
+          <span className="font-semibold">
+            {departedCount} of {train.stops.length}
+          </span>{" "}
+          <span className="text-ink-soft">stops completed</span>
         </p>
-      ) : null}
+        {nextStop ? (
+          <p className="flex flex-wrap items-center gap-2 text-sm text-ink">
+            <span className="text-ink-soft">
+              {currentStop ? "At" : "Next"}
+            </span>
+            <Link
+              href={`/stations/${nextStop.stationCode}`}
+              className="font-semibold hover:underline"
+            >
+              {board.stationByCode[nextStop.stationCode]?.name ??
+                nextStop.stationName ??
+                nextStop.stationCode}
+            </Link>
+            <span className="font-medium text-ink">
+              {formatPunctuality(nextStop.punctuality)}
+            </span>
+            <a href="#current-stop" className="text-ink-soft hover:text-ink hover:underline">
+              On the timeline
+            </a>
+          </p>
+        ) : (
+          <p className="text-sm text-ink-soft">
+            {formatPunctuality(train.stops.at(-1)?.punctuality ?? { kind: "scheduled" })}
+          </p>
+        )}
+      </section>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <section>

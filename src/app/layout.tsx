@@ -1,20 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Source_Sans_3, Syne } from "next/font/google";
+import { IBM_Plex_Mono, Inter } from "next/font/google";
 import { Suspense } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
-const syne = Syne({
-  variable: "--font-syne",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-});
-
-const source = Source_Sans_3({
-  variable: "--font-source",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -97,8 +90,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#E9EEF1" },
-    { media: "(prefers-color-scheme: dark)", color: "#E9EEF1" },
+    { media: "(prefers-color-scheme: light)", color: "#E7EDF3" },
+    { media: "(prefers-color-scheme: dark)", color: "#E7EDF3" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -109,7 +102,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${source.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col atmosphere text-ink">
         <Suspense

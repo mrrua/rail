@@ -9,8 +9,8 @@ export function HeroRails() {
         alt=""
         className="absolute inset-0 h-full w-full object-cover object-[center_35%] sm:object-[62%_center]"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-fog/92 via-fog/45 to-fog/10" />
-      <div className="absolute inset-0 bg-gradient-to-t from-fog/75 via-transparent to-fog/25" />
+      <div className="absolute inset-0 bg-gradient-to-r from-fog from-30% via-fog/80 to-fog/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-fog via-fog/15 to-fog/35" />
     </div>
   );
 }
