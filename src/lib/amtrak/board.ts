@@ -16,6 +16,7 @@ import {
   pickBestTrain,
   slugifyRoute,
 } from "./map";
+import { retainTrains } from "./retain";
 
 export type LiveBoard = {
   source: "live" | "fallback";
@@ -58,7 +59,7 @@ function mergeRouteCatalog(live: RouteSummary[]): RouteSummary[] {
     existing.trainNumbers = [...numbers].sort(
       (a, b) => Number(a) - Number(b) || a.localeCompare(b),
     );
-    if (!existing.name) existing.name = catalog.name;
+    existing.name = catalog.name || existing.name;
   }
 
   return [...bySlug.values()].sort((a, b) => a.name.localeCompare(b.name));
@@ -75,7 +76,7 @@ export const getLiveBoard = cache(async (): Promise<LiveBoard> => {
       .flat()
       .filter((t) => t.provider === "Amtrak" || t.providerShort === "AMTK");
 
-    const trains = rawTrains.map(mapTrain);
+    const trains = await retainTrains(rawTrains.map(mapTrain));
     const liveRoutes = buildRouteSummaries(trains);
     const routes = mergeRouteCatalog(liveRoutes);
 

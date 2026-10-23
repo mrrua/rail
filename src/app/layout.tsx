@@ -17,9 +17,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 const siteName = "Rail";
-const title = "Rail — Live Amtrak train status";
+const title = "Rail: live Amtrak train status";
 const description =
-  "Unofficial live Amtrak status by route, station, and train. See delays, arrivals, and where trains are right now.";
+  "Unofficial Amtrak status. Look up a route, a station, or a train number.";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Rail — Live Amtrak train status",
+        alt: "Rail: live Amtrak train status",
       },
     ],
   },
@@ -120,7 +120,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense
           fallback={
             <footer className="mt-auto border-t border-line/70 bg-paper px-4 py-8 text-sm text-ink-soft">
-              Loading…
+              Loading...
             </footer>
           }
         >

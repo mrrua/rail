@@ -12,7 +12,7 @@ export async function SiteFooter() {
           <div>
             <p className="font-display text-lg font-semibold text-ink">Rail</p>
             <p className="mt-1.5 max-w-xl text-[15px] leading-relaxed">
-              Unofficial Amtrak status board inspired by{" "}
+              Unofficial, like{" "}
               <a
                 href="https://railrat.net/"
                 className="text-rail-deep underline-offset-2 hover:underline"
@@ -21,7 +21,7 @@ export async function SiteFooter() {
               >
                 RailRat.net
               </a>
-              . Live train data from{" "}
+              . Times from{" "}
               <a
                 href="https://amtraker.com"
                 className="text-rail-deep underline-offset-2 hover:underline"
@@ -29,22 +29,13 @@ export async function SiteFooter() {
                 rel="noreferrer"
               >
                 Amtraker
-              </a>{" "}
-              (
-              <a
-                href="https://api.amtraker.com/docs"
-                className="underline-offset-2 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                API docs
               </a>
-              ), licensed under ODC-By. Not affiliated with Amtrak. Use at your
-              own risk.
+              , under the ODC-By license. Not affiliated with Amtrak. Use at
+              your own risk.
             </p>
           </div>
           <p suppressHydrationWarning className="font-mono text-xs text-ink-soft/90">
-            {meta.source === "live" ? "Updated" : "Last attempt"}{" "}
+            {meta.source === "live" ? "Updated" : "Last check"}{" "}
             {formatUpdatedAt(meta.updatedAt)}
           </p>
         </div>
@@ -65,6 +56,14 @@ export async function SiteFooter() {
             rel="noreferrer"
           >
             Amtraker
+          </a>
+          <a
+            href="https://api.amtraker.com/docs"
+            className="hover:text-rail-deep"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Amtraker API
           </a>
           <a
             href="https://www.amtrak.com/track-your-train.html"

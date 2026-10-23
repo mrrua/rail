@@ -42,7 +42,7 @@ async function StationBody({ code }: { code: string }) {
         {station.name}
       </h1>
       <p className="mt-3 text-base text-ink-soft">
-        Arrival and departure updates from the live Amtraker feed.
+        Arrivals and departures.
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
@@ -77,7 +77,7 @@ export default function StationDetailPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <Suspense
-        fallback={<p className="text-sm text-ink-soft">Loading station…</p>}
+        fallback={<p className="text-sm text-ink-soft">Loading station...</p>}
       >
         <StationFromParams params={params} />
       </Suspense>

@@ -14,7 +14,7 @@ export function StationBoard({
       <section className="rounded-2xl border border-line/80 bg-paper/90 p-5">
         <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
         <p className="mt-3 text-sm text-ink-soft">
-          No trains at this station in the current feed.
+          No trains here in this update.
         </p>
       </section>
     );

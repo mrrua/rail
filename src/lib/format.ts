@@ -48,6 +48,17 @@ export function punctualityTone(
   }
 }
 
+export function countLine(
+  counts: { n: number; label: string }[],
+  empty = "Nothing out.",
+): string {
+  const parts = counts
+    .filter((count) => count.n > 0)
+    .map((count) => `${count.n} ${count.label}`);
+  if (parts.length === 0) return empty;
+  return `${parts.join(", ")}.`;
+}
+
 export function statusLabel(status: TrainStatus): string {
   switch (status) {
     case "active":

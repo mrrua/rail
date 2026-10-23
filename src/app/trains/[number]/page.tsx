@@ -38,14 +38,14 @@ async function TrainBody({ number }: { number: string }) {
           {catalogHit ? `${catalogHit.name} ${number}` : `Train ${number}`}
         </h1>
         <p className="mt-4 text-ink-soft">
-          No instance of this train is in the current Amtraker feed.
+          This train isn&apos;t in the latest update.
         </p>
         {catalogHit ? (
           <Link
             href={`/routes/${catalogHit.slug}`}
             className="mt-6 inline-flex text-sm font-semibold text-rail hover:underline"
           >
-            View {catalogHit.name} route →
+            See {catalogHit.name}
           </Link>
         ) : null}
       </div>
@@ -86,7 +86,7 @@ async function TrainBody({ number }: { number: string }) {
 
       {siblings.length > 0 ? (
         <p className="mt-4 text-sm text-ink-soft">
-          Other running instances:{" "}
+          Also out:{" "}
           {siblings.map((s, i) => (
             <span key={s.id}>
               {i > 0 ? ", " : null}
@@ -130,7 +130,7 @@ async function TrainBody({ number }: { number: string }) {
             Position
           </p>
           <p className="mt-1 text-sm text-ink">
-            {train.locationLabel ?? "Awaiting departure"}
+            {train.locationLabel ?? "Not out yet"}
           </p>
           {typeof train.speedMph === "number" ? (
             <p className="mt-1 font-mono text-sm text-rail-deep">
@@ -146,7 +146,7 @@ async function TrainBody({ number }: { number: string }) {
           <span className="font-semibold">
             {departedCount} of {train.stops.length}
           </span>{" "}
-          <span className="text-ink-soft">stops completed</span>
+          <span className="text-ink-soft">stops passed</span>
         </p>
         {nextStop ? (
           <p className="flex flex-wrap items-center gap-2 text-sm text-ink">
@@ -165,7 +165,7 @@ async function TrainBody({ number }: { number: string }) {
               {formatPunctuality(nextStop.punctuality)}
             </span>
             <a href="#current-stop" className="text-ink-soft hover:text-ink hover:underline">
-              On the timeline
+              See stop
             </a>
           </p>
         ) : (
@@ -178,7 +178,7 @@ async function TrainBody({ number }: { number: string }) {
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <section>
           <h2 className="font-display text-xl font-semibold text-ink">
-            Progress tracker
+            Stops
           </h2>
           <div className="mt-4 rounded-xl border border-line bg-paper px-4 py-2 sm:px-5">
             <TrainTimeline stops={train.stops} />
@@ -187,11 +187,11 @@ async function TrainBody({ number }: { number: string }) {
 
         <section>
           <h2 className="font-display text-xl font-semibold text-ink">
-            Position updates
+            Positions
           </h2>
           {train.positions.length === 0 ? (
             <p className="mt-4 text-sm text-ink-soft">
-              No GPS breadcrumb in this snapshot.
+              No position yet.
             </p>
           ) : (
             <ul className="mt-4 space-y-0 overflow-hidden rounded-xl border border-line bg-paper">
@@ -225,7 +225,7 @@ async function TrainBody({ number }: { number: string }) {
             >
               Amtraker
             </a>
-            . Amtrak&apos;s Track Your Train map remains the authoritative source.
+            . If you&apos;re on the train, use Amtrak&apos;s Track Your Train map.
           </p>
         </section>
       </div>
@@ -239,7 +239,7 @@ export default function TrainDetailPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <Suspense
-        fallback={<p className="text-sm text-ink-soft">Loading train…</p>}
+        fallback={<p className="text-sm text-ink-soft">Loading train...</p>}
       >
         <TrainFromParams params={params} />
       </Suspense>

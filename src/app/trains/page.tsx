@@ -6,6 +6,7 @@ import {
   getBoardMeta,
   trainsGroupedByRoute,
 } from "@/lib/amtrak/board";
+import { pickBestTrain } from "@/lib/amtrak/map";
 
 export const metadata: Metadata = {
   title: "Trains",
@@ -21,8 +22,7 @@ async function TrainsBody() {
     <>
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-2xl text-base leading-relaxed text-ink-soft">
-          Live Amtrak train numbers. Bold entries have a running instance in
-          the current feed; dots mark recent movement.
+          Bold numbers are out. A dot means the train moved recently.
         </p>
         <DataSourceBadge
           source={meta.source}
@@ -58,20 +58,26 @@ async function TrainsBody() {
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {numbers.map((n) => {
-                  const live = routeTrains.find((t) => t.number === n);
-                  const hasDetail = Boolean(live);
+                  const instances = routeTrains.filter((t) => t.number === n);
+                  const live = pickBestTrain(instances);
+                  const out = instances.some(
+                    (t) => t.status === "active" || t.status === "pending",
+                  );
                   return (
                     <Link
                       key={n}
                       href={`/trains/${live?.id ?? n}`}
                       className={`rounded-md border px-2.5 py-1 font-mono text-sm transition ${
-                        hasDetail
+                        out
                           ? "border-rail/30 bg-rail/5 font-semibold text-ink hover:border-rail"
-                          : "border-line bg-paper text-ink-soft hover:border-line hover:text-ink"
+                          : live
+                            ? "border-line bg-paper text-ink hover:border-rail/40"
+                            : "border-line bg-paper text-ink-soft hover:border-line hover:text-ink"
                       }`}
                     >
                       {n}
-                      {live?.hasRecentUpdate ? (
+                      {instances.length > 1 ? ` (${instances.length})` : ""}
+                      {instances.some((t) => t.hasRecentUpdate) ? (
                         <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-signal align-middle" />
                       ) : null}
                     </Link>
@@ -90,10 +96,10 @@ export default function TrainsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="font-display text-4xl font-extrabold tracking-tight text-ink">
-        Train index
+        Trains
       </h1>
       <Suspense
-        fallback={<p className="mt-6 text-sm text-ink-soft">Loading trains…</p>}
+        fallback={<p className="mt-6 text-sm text-ink-soft">Loading trains...</p>}
       >
         <TrainsBody />
       </Suspense>

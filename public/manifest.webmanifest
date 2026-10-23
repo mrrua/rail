@@ -1,7 +1,7 @@
 {
-  "name": "Rail — Amtrak status",
+  "name": "Rail: Amtrak status",
   "short_name": "Rail",
-  "description": "Live unofficial Amtrak train status by route, station, and train.",
+  "description": "Unofficial Amtrak status by route, station, or train.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#E7EDF3",

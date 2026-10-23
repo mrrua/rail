@@ -11,7 +11,15 @@ import type {
   Train,
   TrainStatus,
 } from "../types";
+import { routes as catalogRoutes } from "../data/routes";
 import type { AmtrakerStationMeta, AmtrakerStop, AmtrakerTrain } from "./types";
+
+const routeByNumber = new Map<string, { slug: string; name: string }>();
+for (const route of catalogRoutes) {
+  for (const number of route.trainNumbers) {
+    routeByNumber.set(number, { slug: route.slug, name: route.name });
+  }
+}
 
 const TZ_ABBR: Record<string, string> = {
   "America/New_York": "ET",
@@ -52,6 +60,8 @@ export const ROUTE_SLUGS: Record<string, string> = {
   "San Joaquins": "gold-runner",
   "Heartland Flyer": "heartland-flyer",
   Hiawatha: "hiawatha",
+  Illini: "saluki-illinois",
+  Saluki: "saluki-illinois",
   "Lincoln Service": "lincoln-illinois",
   "Illinois Zephyr": "illinois-zephyr",
   "Carl Sandburg": "illinois-zephyr",
@@ -59,6 +69,7 @@ export const ROUTE_SLUGS: Record<string, string> = {
   "Lake Shore Limited": "lake-shore-limited",
   "Maple Leaf": "maple-leaf",
   "Mardi Gras Service": "mardi-gras",
+  "Berkshire Flyer": "berkshire-flyer",
   "Blue Water": "blue-water",
   "Pere Marquette": "pere-marquette",
   Wolverine: "wolverine",
@@ -68,6 +79,7 @@ export const ROUTE_SLUGS: Record<string, string> = {
   Pennsylvanian: "pennsylvanian",
   "Silver Meteor": "silver-meteor",
   Palmetto: "silver-palmetto",
+  "Silver Service / Palmetto": "silver-palmetto",
   "Southwest Chief": "southwest-chief",
   "Sunset Limited": "sunset-limited",
   "Texas Eagle": "texas-eagle",
@@ -214,7 +226,7 @@ export function mapTrain(raw: AmtrakerTrain): Train {
   const originStop = raw.stations[0];
   const originTime =
     formatClock(originStop?.dep || originStop?.schDep || originStop?.schArr) ??
-    "—";
+    "–";
   const originDate = formatDateShort(
     originStop?.dep || originStop?.schDep || originStop?.schArr,
   );
@@ -240,18 +252,21 @@ export function mapTrain(raw: AmtrakerTrain): Train {
             time:
               formatClock(raw.lastValTS) ??
               formatClock(raw.updatedAt) ??
-              "—",
+              "–",
             description: locationLabel,
             speedMph: speed,
           },
         ]
       : [];
 
+  const number = String(raw.trainNumRaw || raw.trainNum);
+  const catalog = routeByNumber.get(number);
+
   return {
     id: raw.trainID,
-    number: String(raw.trainNumRaw || raw.trainNum),
-    routeSlug: slugifyRoute(raw.routeName),
-    routeName: raw.routeName,
+    number,
+    routeSlug: catalog?.slug ?? slugifyRoute(raw.routeName),
+    routeName: catalog?.name ?? raw.routeName,
     status: mapTrainStatus(raw.trainState),
     direction: mapDirection(raw.heading, raw.origCode, raw.destCode),
     originCode: raw.origCode,
@@ -325,7 +340,7 @@ export function buildStationBoard(
       items.push({
         trainNumber: train.number,
         routeName: train.routeName,
-        time: stop.actualDeparture || stop.actualArrival || "—",
+        time: stop.actualDeparture || stop.actualArrival || "–",
         punctuality: stop.punctuality,
         kind: "departed",
         trainId: train.id,
@@ -353,7 +368,7 @@ export function buildStationBoard(
         stop.estimatedDeparture ||
         stop.scheduledArrival ||
         stop.scheduledDeparture ||
-        "—",
+        "–",
       punctuality: stop.punctuality,
       kind: "arriving",
       trainId: train.id,

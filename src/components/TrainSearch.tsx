@@ -136,7 +136,7 @@ export function TrainSearch({
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
-            placeholder="Try 7, Empire Builder, Chicago…"
+            placeholder="7, Empire Builder, or Chicago"
             aria-controls={listId}
             aria-expanded={showPanel}
             aria-autocomplete="list"
@@ -172,7 +172,7 @@ export function TrainSearch({
         >
           {hits.length === 0 ? (
             <li className="px-4 py-3 text-sm text-ink-soft">
-              Nothing matches “{query.trim()}”.
+              No match for {query.trim()}.
             </li>
           ) : (
             hits.map((hit, index) => {

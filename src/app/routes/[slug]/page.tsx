@@ -11,6 +11,7 @@ import {
   trainsForRoute,
 } from "@/lib/amtrak/board";
 import { routes as catalogRoutes } from "@/lib/data/routes";
+import { countLine } from "@/lib/format";
 
 export function generateStaticParams() {
   return catalogRoutes.map((route) => ({ slug: route.slug }));
@@ -52,8 +53,11 @@ async function RouteBody({ slug }: { slug: string }) {
         {route.name}
       </h1>
       <p className="mt-3 max-w-2xl text-base text-ink-soft">
-        {route.active} active · {route.complete} complete · {route.pending}{" "}
-        pending. Click train numbers or stations for more detail.
+        {countLine([
+          { n: route.active, label: "running" },
+          { n: route.complete, label: "finished" },
+          { n: route.pending, label: "not out yet" },
+        ])}
       </p>
 
       {liveTrains.length > 0 ? (
@@ -95,17 +99,16 @@ async function RouteBody({ slug }: { slug: string }) {
         </section>
       ) : (
         <p className="mt-8 text-sm text-ink-soft">
-          No trains for this route in the current Amtraker feed.
+          No trains on this route in this update.
         </p>
       )}
 
       <section className="mt-10">
         <h2 className="font-display text-xl font-semibold text-ink">
-          Schedule matrix
+          Schedule
         </h2>
         <p className="mt-2 text-sm text-ink-soft">
-          Stations down the side, trains across the top — built from live stop
-          lists.
+          Stations down the side, trains across the top.
         </p>
         <div className="mt-4">
           {matrix ? (
@@ -121,7 +124,7 @@ async function RouteBody({ slug }: { slug: string }) {
             />
           ) : (
             <div className="rounded-xl border border-dashed border-line bg-paper/70 p-6 text-sm text-ink-soft">
-              No active trains to build a matrix right now.
+              No trains out, so no schedule yet.
             </div>
           )}
         </div>
@@ -155,7 +158,7 @@ export default function RouteDetailPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <Suspense
-        fallback={<p className="text-sm text-ink-soft">Loading route…</p>}
+        fallback={<p className="text-sm text-ink-soft">Loading route...</p>}
       >
         <RouteFromParams params={params} />
       </Suspense>

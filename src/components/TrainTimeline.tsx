@@ -29,7 +29,7 @@ export function TrainTimeline({ stops }: { stops: StopEvent[] }) {
           stop.estimatedArrival ||
           stop.scheduledDeparture ||
           stop.scheduledArrival ||
-          "—";
+          "–";
 
         return (
           <li
@@ -87,17 +87,23 @@ export function TrainTimeline({ stops }: { stops: StopEvent[] }) {
 function labelForStop(stop: StopEvent): string {
   switch (stop.state) {
     case "departed":
-      return stop.actualArrival
-        ? `Arrived ${stop.actualArrival}, departed ${stop.actualDeparture ?? "—"}`
-        : `Departed ${stop.actualDeparture ?? "—"}`;
+      if (stop.actualArrival && stop.actualDeparture) {
+        return `Arrived ${stop.actualArrival}, departed ${stop.actualDeparture}`;
+      }
+      if (stop.actualDeparture) return `Departed ${stop.actualDeparture}`;
+      if (stop.actualArrival) return `Arrived ${stop.actualArrival}`;
+      return "Departed";
     case "arrived":
-      return `Arrived ${stop.actualArrival ?? "—"}`;
+      return stop.actualArrival ? `Arrived ${stop.actualArrival}` : "Arrived";
     case "en_route":
-      return `Est. arrival ${stop.estimatedArrival ?? "—"}`;
-    case "upcoming":
       return stop.estimatedArrival
-        ? `Est. arrival ${stop.estimatedArrival}`
-        : `Scheduled ${stop.scheduledDeparture ?? stop.scheduledArrival ?? "—"}`;
+        ? `Due ${stop.estimatedArrival}`
+        : "On the way";
+    case "upcoming":
+      if (stop.estimatedArrival) return `Due ${stop.estimatedArrival}`;
+      if (stop.scheduledDeparture) return `Scheduled ${stop.scheduledDeparture}`;
+      if (stop.scheduledArrival) return `Scheduled ${stop.scheduledArrival}`;
+      return "Scheduled";
     case "skipped":
       return "Does not stop";
   }

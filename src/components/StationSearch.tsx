@@ -40,12 +40,14 @@ export function StationSearch({ stations }: { stations: Station[] }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search stations by name, city, or code…"
+          placeholder="Name, city, or code"
           className="w-full min-h-12 rounded-2xl border border-line/80 bg-paper/90 px-4 py-3 text-base text-ink outline-none ring-rail/25 placeholder:text-ink-soft/70 focus:ring-2 sm:text-sm"
         />
-        <p className="mt-2 text-xs text-ink-soft">
-          Showing {filtered.length} of {stations.length} stations
-        </p>
+        {deferred.trim() ? (
+          <p className="mt-2 text-xs text-ink-soft">
+            {filtered.length} of {stations.length}
+          </p>
+        ) : null}
       </div>
 
       {letters.length > 1 ? (
@@ -88,7 +90,7 @@ export function StationSearch({ stations }: { stations: Station[] }) {
           </section>
         ))}
         {grouped.length === 0 ? (
-          <p className="text-sm text-ink-soft">No stations match that search.</p>
+          <p className="text-sm text-ink-soft">No station by that name.</p>
         ) : null}
       </div>
     </div>

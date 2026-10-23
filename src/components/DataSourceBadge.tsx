@@ -17,7 +17,7 @@ export function DataSourceBadge({
         className={`h-2 w-2 shrink-0 rounded-full ${live ? "live-dot bg-lamp" : "bg-warn"}`}
       />
       <span className="min-w-0">
-        {live ? "Live via " : "Feed unavailable · "}
+        {live ? "Live from " : "Amtraker is down. "}
         {live ? (
           <a
             href="https://amtraker.com"
@@ -28,7 +28,7 @@ export function DataSourceBadge({
             Amtraker
           </a>
         ) : (
-          "empty board"
+          "Empty board."
         )}
       </span>
       <span className="hidden text-ink-soft/50 sm:inline">·</span>
@@ -40,7 +40,7 @@ export function DataSourceBadge({
       </span>
       {error ? (
         <span className="text-bad" title={error}>
-          · error
+          Update failed
         </span>
       ) : null}
     </div>
