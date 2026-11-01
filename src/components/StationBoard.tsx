@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { StationBoardItem } from "@/lib/types";
 import { PunctualityPill } from "./StatusPill";
+import { LocalTime } from "./LocalTime";
 
 export function StationBoard({
   title,
@@ -48,7 +49,7 @@ export function StationBoard({
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <span className="font-mono text-sm tabular-nums">{item.time}</span>
+              <span className="font-mono text-sm tabular-nums"><LocalTime value={item.time} /></span>
               <PunctualityPill value={item.punctuality} />
             </div>
           </li>

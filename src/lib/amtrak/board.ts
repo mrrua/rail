@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { routes as catalogRoutes } from "../data/routes";
 import type { RouteSummary, Station, StationBoardItem, Train } from "../types";
 import { fetchAmtrakerStations, fetchAmtrakerTrains } from "./client";
@@ -114,6 +115,11 @@ async function buildLiveBoard(): Promise<LiveBoard> {
 
 /** Return the process snapshot; only an expired/missing snapshot causes a load. */
 export async function getLiveBoard(): Promise<LiveBoard> {
+  // The board cache uses the current clock to enforce its TTL. Treat it as
+  // request-time data instead of evaluating that clock during static prerender.
+  // Callers render this beneath Suspense, so static shells can still be built.
+  await connection();
+
   const cache = getBoardCache();
   if (cache.board && Date.now() < cache.expiresAt) return cache.board;
   // Concurrent references share a refresh. While refreshing an expired snapshot,
